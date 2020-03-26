@@ -14,6 +14,12 @@ List the platforms and operation systems on which the operator is supported.
 |---|---|---|---|---|
 |1.0.0| 03/2020|AMD64|<ul><li>[OpenShift Container Platform](https://www.openshift.com/) 4.2 or higher</li><br></br><li>Kubernetes 1.11.3 or higher</li></ul>|First release |
 
+## Prerequisites
+- For License Service to work, you need to install the following services that are also included in IBM Cloud Platform Common Services:
+ - Metering 
+ - ?
+- Administrator permissions for the cluster
+
 ## Documentation
 If you use License Service as a part of a an IBM Cloud Pak, see the Cloud Pak documentation in the [IBM Knowledge Center](https://www.ibm.com/support/knowledgecenter/).
 If you use License Service separately, see [IBM Cloud Platform Common Services](http://ibm.biz/cpcsdocs).
@@ -66,50 +72,7 @@ You can install IBM Licensing Operation in the following configurations:
 - [Other configurations: Installing on Kubernetes with `kubectl` ](#install-the-ibm-licensing-operator-on-kubernetes-from-scratch)
 
 ### Installing IBM Licensing Operator on OCP 4.2 or higher
-
-#### Prerequisites
-- Administrator permissions for the cluster
-- Access to the OpenShift console UI
-
-1. Create OperatorSource
-
-Create the operator source to get the operator bundles from `quay.io` by running the following command:
-
-```
-yaml
-apiVersion: operators.coreos.com/v1
-kind: OperatorSource
-metadata:
-  name: opencloud-operators
-  namespace: openshift-marketplace
-spec:
-  authorizationToken: {}
-  displayName: IBMCS Operators
-  endpoint: https://quay.io/cnr
-  publisher: IBM
-  registryNamespace: opencloudio
-  type: appregistry
-```
-
-Click the plus button, and copy the operator source into an editor.
-![Create OperatorSource](images/create-operator-source.png)
-
-2. Create a Namespace `ibm-common-services`
-
-Open the `OperatorHub` page in OCP console left menu, then `Create Project` named `ibm-common-services`.
-![Create Project](images/create-project.png)
-
-3. Install `IBM Licensing Operator` Package in the OperatorHub
-
-Open `OperatorHub` and search `IBM Licensing Operator` to find the operator,
-and install it by clicking install.
-![Operator Hub IBM Licensing](images/operator-hub-licensing.png)
-
-Select specific namespace `ibm-common-services` that was created in step [Create Project](#2-create-a-namespace-ibm-common-services) and click subscribe.
-![Subscribe to IBM Licensing OLM](images/subscribe-licensing.png)
-
-Now after waiting about 1 minute and clicking installed operators you should see IBM Licensing Operator and it should have status `InstallSucceeded`
-![IBM Licensing Installed](images/installed.png)
+See the installtion instruction in IBM Knowledge Center [Installing IBM Cloud Platform Services in your OpenShift Container Platform cluster](https://www-03preprod.ibm.com/support/knowledgecenter/SSHKN6/installer/3.3.0/install_operator.html).
 
 ### Installing IBM Licensing Operator on Kubernetes with `kubectl`
 
@@ -119,7 +82,7 @@ Now after waiting about 1 minute and clicking installed operators you should see
 - Linux or iOS
     **Note**: To install on Windows, change the commands to fit the Windows standard.
 
-#### 1. Install Operator Lifecycle Manager
+1. Install Operator Lifecycle Manager
 
 Make sure You are connected to your cluster f.e. using:
 
@@ -137,7 +100,7 @@ curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releas
 
 In case you have any error you might have old kubernetes version. You can try either upgrading your kubernetes server version or using older version of OLM.
 
-#### 2. Install the Operator Marketplace
+2. Install the Operator Marketplace
 
 Clone the following github repo:
 
@@ -188,7 +151,7 @@ sed -i "" '/.*preserveUnknownFields.*/d' operator-marketplace/deploy/upstream/*
 kubectl apply -f operator-marketplace/deploy/upstream
 ```
 
-#### 3. Create the OperatorSource
+3. Create the OperatorSource
 
 An `OperatorSource` object is used to define the external datastore we are using to store operator bundles. More information including example can be found in the documentation included in the `operator-marketplace` [repository](https://github.com/operator-framework/operator-marketplace#operatorsource).
 
@@ -242,7 +205,7 @@ upstream-community-operators-7ffb6b674b-7qlvx   1/1     Running   0          80s
 If something seems wrong check [troubleshoot](#createcontainerconfigerror-marketplace-operator-error)
 
 
-#### 4. Validation: View Available Operators
+4. Validation: View Available Operators
 
 Once the `OperatorSource` and `CatalogSource` are deployed, the following command can be used to list the available operators, this should include ibm-licensing-operator-app
 > The command below assumes `opencloud-operators` as the name of the `OperatorSource` object. Adjust accordingly.
@@ -253,7 +216,7 @@ NAME                  PACKAGES
 opencloud-operators   ibm-meta-operator-bridge-app,ibm-commonui-operator-app,ibm-catalog-ui-operator-app,ibm-metering-operator-app,ibm-helm-repo-operator-app,ibm-iam-operator-app,ibm-elastic-stack-operator-app,ibm-monitoring-exporters-operator-app,ibm-monitoring-prometheusext-operator-app,cp4foobar-operator-app,ibm-healthcheck-operator-app,ibm-platform-api-operator-app,ibm-management-ingress-operator-app,ibm-helm-api-operator-app,ibm-licensing-operator-app,ibm-ingress-nginx-operator-app,ibm-monitoring-grafana-operator-app,ibm-auditlogging-operator-app,operand-deployment-lifecycle-manager-app,ibm-mgmt-repo-operator-app,ibm-mongodb-operator-app,ibm-cert-manager-operator-app
 ```
 
-#### 5. Create an OperatorGroup
+5. Create an OperatorGroup
 
 An `OperatorGroup` is used to denote which namespaces your Operator should be watching.
 It must exist in the namespace where your operator should be deployed, we'll use `ibm-common-services`.
@@ -278,7 +241,7 @@ spec:
 EOF
 ```
 
-#### 6. Create a Subscription
+6. Create a Subscription
 
 The last piece ties together all of the previous steps. A `Subscription` is created to the operator.
 Create the `Subscription` using:
@@ -298,7 +261,7 @@ spec:
 EOF
 ```
 
-#### 7. Verify Operator health
+7. Verify Operator health
 
 Watch IBM Licensing Operator being deployed by OLM from the catalog source created by Operator Marketplace with the following command:
 
@@ -316,95 +279,10 @@ Optional also check your Operator's deployment:
 kubectl get deployment -n ibm-common-services | grep ibm-licensing-operator
 ```
 
-## Using IBM Licensing Service
+8. Additional configuration
 
 After you successfully installed IBM Licensing Operator you can create IBMLicensing instance that will make IBM Licensing Service running in cluster.
 
-### Create instance on OCP 4.2+
-
-If you have OCP 4.2+ you can create the instance from the OCP UI->Installed Operators->IBM Licensing Operator->IBM Licensing tab->Create IBMLicensing
-
-This should look like this:
-![OCP click Create IBM Licensing](images/ocp_create_instance.png)
-
-Then after clicking `Create IBMLicensing` you can edit your parameters:
-![OCP create IBM Licensing instance](images/ocp_creating_instance.png)
-
-Make sure to use `metering` datasource if IBM Metering Service exits in your cluster.
-Otherwise you <b>need</b> to change datasource to `datacollector`:
-![OCP instance datacollector](images/ocp_instance_datacollector.png)
-
-More about parameters from IBMLicensing instance are described here: [IBMLicensingOperatorParameters](images/IBMLicensingOperatorParameters.csv)
-
-If you are sure about your parameters click create.
-Later if you want to edit your instance go to:
-OCP UI->Administration->Custom Resource Definitions->select IBMLicensing->instances->Edit IBMLicensing
-
-![OCP Edit Instance](images/ocp_edit_instance.png)
-
-In case instance is not updated properly try deleting the instance and creating new one with new parameters.
-
-### Create instance from console
-
-First edit your custom resource at [deploy/crds/operator.ibm.com_v1alpha1_ibmlicensing_cr.yaml](deploy/crds/operator.ibm.com_v1alpha1_ibmlicensing_cr.yaml)
-
-Make sure to use `metering` datasource if IBM Metering Service exits in your cluster.
-Otherwise you <b>need</b> to change datasource to `datacollector`
-More about parameters from IBMLicensing instance are described here: [IBMLicensingOperatorParameters](images/IBMLicensingOperatorParameters.csv)
-
-Apply it using:
-
-```bash
-kubectl apply -f deploy/crds/operator.ibm.com_v1alpha1_ibmlicensing_cr.yaml
-```
-
-### Check Components
-
-First check if pod is created.
-You can see the logs at OCP UI->Workloads->Pods->search for `licensing` in `ibm-common-services` project:
-
-![OCP Pod](images/ocp_pod.png)
-
-Check if pod is running, for further investigating you can click it to check logs, and events.
-
-From console you can use:
-
-```bash
-podName=`kubectl get pod -n ibm-common-services -o jsonpath="{range .items[*]}{.metadata.name}{'\n'}" | grep ibm-licensing-service-instance`
-kubectl logs $podName -n ibm-common-services
-kubectl describe pod $podName -n ibm-common-services
-```
-
-You can also check OCP UI->Networking->Service,Route*
-
-\* or Ingress if you changed instance parameters
-
-From console you can use for example this to check Ingress:
-
-```bash
-kubectl get ingress -n ibm-common-services -o yaml
-```
-
-### Show and use API
-
-First you need to get your URL from Route or Ingress, if you use default options the route should be created:
-Go to OCP UI->Networking->Route and search for `ibm-licensing-service-instance` in project `ibm-common-services`:
-![OCP Route](images/ocp_route.png)
-
-Here you can just click the `Location` and you should be redirected to IBM Licensing Service API.
-
-To use API you need to get token, you can get it at OCP UI->Workloads->Secret->ibm-licensing-token.
-Click ibm-licensing-token and get token from `Data` token field:
-![OCP Token](images/ocp_token_gen.png)
-
-You can copy it from console using:
-
-```bash
-kubectl get secret -n ibm-common-services ibm-licensing-token -o jsonpath="{.data.token}" | base64 --decode | grep ""
-```
-
-If everything works you can see your IBM Licensing Service UI at URL from your Ingress or Route:
-![IBM Licensing Service UI](images/ibm_licensing_service_ui.png)
 
 ## Uninstall
 
