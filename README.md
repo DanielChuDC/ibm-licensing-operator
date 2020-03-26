@@ -62,8 +62,8 @@ If you are installing the operator separately, see [IBM Cloud Platform Common Se
 
 ## Installation
 You can install IBM Licensing Operation in the following configurations:
-- [OpenShift Container Platform (OCP) version 4.2 or higher](#install-the-ibm-licensing-operator-on-ocp-42)
-- [Other configurations](#install-the-ibm-licensing-operator-on-kubernetes-from-scratch)
+- [OpenShift Container Platform (OCP) version 4.2 or higher](https://www-03preprod.ibm.com/support/knowledgecenter/SSHKN6/installer/3.3.0/install_operator.html)
+- [Other configurations: Installing on Kubernetes with `kubectl` ](#install-the-ibm-licensing-operator-on-kubernetes-from-scratch)
 
 ### Installing IBM Licensing Operator on OCP 4.2 or higher
 
