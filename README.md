@@ -14,11 +14,10 @@ List the platforms and operation systems on which the operator is supported.
 |---|---|---|---|---|
 |1.0.0| 03/2020|AMD64|[OpenShift Container Platform](https://www.openshift.com/) 4.2 or higher,<br></br>Kubernetes 1.11.3 or higher|First release |
 
-## IBM Documentation
-
-For IBM CP doc
+## Documentation
 For installation and configuration, see [IBM Knowledge Center link].
-To install separately see below to use License Service not a part of CP. 
+To install the service independently from the IBM Cloud Paks see the installation section. 
+
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -73,9 +72,10 @@ You can install IBM Licensing Operation in the following configurations:
 
 1. Create OperatorSource
 
-Before install IBM Licensing Operator, this operator source should be created to get operator bundles from `quay.io`.
+Create the operator source to get the operator bundles from `quay.io` by running the following command:
 
-```yaml
+```
+yaml
 apiVersion: operators.coreos.com/v1
 kind: OperatorSource
 metadata:
@@ -90,7 +90,7 @@ spec:
   type: appregistry
 ```
 
-Click the plus button, and then copy the above operator source into the editor.
+Click the plus button, and copy the operator source into an editor.
 ![Create OperatorSource](images/create-operator-source.png)
 
 2. Create a Namespace `ibm-common-services`
