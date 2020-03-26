@@ -15,10 +15,10 @@ List the platforms and operation systems on which the operator is supported.
 |1.0.0| 03/2020|AMD64|<ul><li>[OpenShift Container Platform](https://www.openshift.com/) 4.2 or higher</li><br></br><li>Kubernetes 1.11.3 or higher</li></ul>|First release |
 
 ## Documentation
-If you are installing the operator as a part of a an IBM Cloud Pak, see the Cloud Pak documentation in the [IBM Knowledge Center](https://www.ibm.com/support/knowledgecenter/).
+If you use License Service as a part of a an IBM Cloud Pak, see the Cloud Pak documentation in the [IBM Knowledge Center](https://www.ibm.com/support/knowledgecenter/).
+If you use License Service separately, see [IBM Cloud Platform Common Services](http://ibm.biz/cpcsdocs).
 
-If you are installing the operator separately, see [IBM Cloud Platform Common Services](http://ibm.biz/cpcsdocs).
-
+### Developer guide 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
