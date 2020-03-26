@@ -12,7 +12,7 @@ operator-lifecycle-manager repo on GitHub](https://github.com/operator-framework
 List the platforms and operation systems on which the operator is supported.
 |Operator version|Date|Supported operating systems|Supported platforms|Details|
 |---|---|---|---|---|
-|1.0.0| 03/2020|AMD64|[OpenShift Container Platform](https://www.openshift.com/) 4.2 or higher,<br></br>Kubernetes 1.11.3 or higher|First release |
+|1.0.0| 03/2020|AMD64|<ul><li>[OpenShift Container Platform](https://www.openshift.com/) 4.2 or higher</li><br></br><li>Kubernetes 1.11.3 or higher</li></ul>|First release |
 
 ## Documentation
 If you are installing the operator as a part of a an IBM Cloud Pak, see the Cloud Pak documentation in the IBM Knowledge Center.
