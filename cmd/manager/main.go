@@ -47,7 +47,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
 
-	odlmv1alpha1 "github.com/IBM/operand-deployment-lifecycle-manager/pkg/apis"
+	odlmApis "github.com/IBM/operand-deployment-lifecycle-manager/pkg/apis"
 )
 
 // Change below variables to serve metrics on different host or port.
@@ -136,7 +136,7 @@ func main() {
 	}
 
 	// Add BindInfo resource for sharing secret with other namespaces
-	if err := odlmv1alpha1.AddToScheme(mgr.GetScheme()); err != nil {
+	if err := odlmApis.AddToScheme(mgr.GetScheme()); err != nil {
 		log.Error(err, "")
 		os.Exit(1)
 	}
