@@ -32,6 +32,7 @@ import (
 	"github.com/ibm/ibm-licensing-operator/pkg/controller"
 	"github.com/ibm/ibm-licensing-operator/version"
 
+	routev1 "github.com/openshift/api/route/v1"
 	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
 	kubemetrics "github.com/operator-framework/operator-sdk/pkg/kube-metrics"
 	"github.com/operator-framework/operator-sdk/pkg/leader"
@@ -46,7 +47,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
 
-	routev1 "github.com/openshift/api/route/v1"
+	odlmv1alpha1 "github.com/IBM/operand-deployment-lifecycle-manager/pkg/apis"
 )
 
 // Change below variables to serve metrics on different host or port.
@@ -130,6 +131,12 @@ func main() {
 
 	// Add Route resource for OpenShift clusters
 	if err := routev1.Install(mgr.GetScheme()); err != nil {
+		log.Error(err, "")
+		os.Exit(1)
+	}
+
+	// Add BindInfo resource for sharing secret with other namespaces
+	if err := odlmv1alpha1.AddToScheme(mgr.GetScheme()); err != nil {
 		log.Error(err, "")
 		os.Exit(1)
 	}
