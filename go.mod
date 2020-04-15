@@ -3,7 +3,7 @@ module github.com/ibm/ibm-licensing-operator
 go 1.13
 
 require (
-	github.com/IBM/operand-deployment-lifecycle-manager v1.1.0-cambridge
+	github.com/IBM/operand-deployment-lifecycle-manager v1.1.0-cambridge.0.20200415094827-969b0f871b28
 	github.com/go-logr/logr v0.1.0
 	github.com/openshift/api v3.9.1-0.20190924102528-32369d4db2ad+incompatible
 	github.com/operator-framework/operator-sdk v0.15.1
@@ -12,7 +12,7 @@ require (
 	k8s.io/apimachinery v0.17.2
 	k8s.io/client-go v12.0.0+incompatible
 	k8s.io/kube-openapi v0.0.0-20190918143330-0270cf2f1c1d
-	sigs.k8s.io/controller-runtime v0.5.0
+	sigs.k8s.io/controller-runtime v0.5.2
 )
 
 // Pinned to kubernetes-1.16.2

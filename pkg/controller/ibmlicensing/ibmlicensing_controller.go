@@ -43,11 +43,14 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
+
+	odlmv1alpha1 "github.com/IBM/operand-deployment-lifecycle-manager/pkg/apis/operator/v1alpha1"
 )
 
 var (
 	log                = logf.Log.WithName("controller_ibmlicensing")
 	isOpenshiftCluster = true
+	bindInfoExists     = true
 )
 
 //var isOldIngressVersion = false
@@ -117,14 +120,32 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	routeTestInstance := &routev1.Route{}
 	err = mgr.GetClient().Get(context.TODO(), types.NamespacedName{}, routeTestInstance)
 	if err != nil && metaErrors.IsNoMatchError(err) {
-		log.Error(err, "Route CR not found, assuming not on OpenShift Cluster, restart operator if this is wrong")
+		log.Error(err, "Route CRD not found, assuming not on OpenShift Cluster, restart operator if this is wrong")
 		isOpenshiftCluster = false
+	}
+
+	bindInfoTestInstance := &odlmv1alpha1.OperandBindInfo{}
+	err = mgr.GetClient().Get(context.TODO(), types.NamespacedName{}, bindInfoTestInstance)
+	if err != nil && metaErrors.IsNoMatchError(err) {
+		log.Error(err, "OperandBindInfo CRD not found, this means OperandBindInfo CR for secrets will not be"+
+			" created. After creating OperandBindInfo CRD You need to restart this controller")
+		bindInfoExists = false
 	}
 
 	if isOpenshiftCluster {
 		// Watch for changes to openshift resources if on OC
 		err = watchForResources(c, []ResourceObject{
 			&routev1.Route{},
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	if bindInfoExists {
+		// Watch for changes to openshift resources if on OC
+		err = watchForResources(c, []ResourceObject{
+			&odlmv1alpha1.OperandBindInfo{},
 		})
 		if err != nil {
 			return err
@@ -183,6 +204,7 @@ func (r *ReconcileIBMLicensing) Reconcile(request reconcile.Request) (reconcile.
 		r.reconcileClusterRole,
 		r.reconcileClusterRoleBinding,
 		r.reconcileAPISecretToken,
+		r.reconcileOperandBindInfo,
 		r.reconcileDeployment,
 		r.reconcileService,
 		r.reconcileIngress,
@@ -337,6 +359,33 @@ func (r *ReconcileIBMLicensing) reconcileAPISecretToken(instance *operatorv1alph
 	}
 	foundSecret := &corev1.Secret{}
 	return r.reconcileResourceNamespacedExistence(instance, expectedSecret, foundSecret)
+}
+
+func (r *ReconcileIBMLicensing) reconcileOperandBindInfo(instance *operatorv1alpha1.IBMLicensing) (reconcile.Result, error) {
+	if !bindInfoExists {
+		return reconcile.Result{}, nil
+	}
+	metaLabels := res.LabelsForLicensingMeta(instance)
+	expectedOBI := &odlmv1alpha1.OperandBindInfo{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      res.GetResourceName(instance),
+			Namespace: instance.Spec.InstanceNamespace,
+			Labels:    metaLabels,
+		},
+		Spec: odlmv1alpha1.OperandBindInfoSpec{
+			Operand:     "ibm-licensing-operator",
+			Registry:    "common-service",
+			Description: "Binding information that should be accessible to licensing adopters",
+			Bindings: []odlmv1alpha1.Binding{
+				{
+					Scope:  odlmv1alpha1.ScopePublic,
+					Secret: instance.Spec.APISecretToken,
+				},
+			},
+		},
+	}
+	foundOBI := &odlmv1alpha1.OperandBindInfo{}
+	return r.reconcileResourceNamespacedExistence(instance, expectedOBI, foundOBI)
 }
 
 func (r *ReconcileIBMLicensing) reconcileService(instance *operatorv1alpha1.IBMLicensing) (reconcile.Result, error) {
