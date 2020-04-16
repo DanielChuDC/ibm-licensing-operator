@@ -283,7 +283,7 @@ kubectl create namespace ibm-common-services
 
 ```yaml
 cat <<EOF | kubectl apply -f -
-apiVersion: operators.coreos.com/v1alpha2
+apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
   name: operatorgroup
